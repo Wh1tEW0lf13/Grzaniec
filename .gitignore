@@ -1,0 +1,22 @@
+# Wyniki budowania i cache
+*.iml
+.gradle
+/build
+/*/build
+
+# Konfiguracja środowiska i SDK
+.idea
+.fleet
+.vscode
+local.properties
+Captures/
+.externalNativeBuild
+.cxx
+
+# Klucze podpisywania
+*.jks
+*.keystore
+
+# Pamięć podręczna systemu operacyjnego
+.DS_Store
+Thumbs.db
