@@ -1,9 +1,30 @@
+# Wyniki budowania i cache
+*.iml
+.gradle
+/build
+/*/build
+
+# Konfiguracja środowiska i SDK
+.idea
+.fleet
+.vscode
+local.properties
+Captures/
+.externalNativeBuild
+.cxx
 # Compiled class file
 *.class
 
 # Log file
 *.log
 
+# Klucze podpisywania
+*.jks
+*.keystore
+
+# Pamięć podręczna systemu operacyjnego
+.DS_Store
+Thumbs.db
 # BlueJ files
 *.ctxt
 
