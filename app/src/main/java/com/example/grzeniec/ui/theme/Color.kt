@@ -1,11 +1,20 @@
 package com.example.grzeniec.ui.theme
-
+import androidx.compose.runtime.Composable
+import androidx.compose.material3.NavigationBarItemColors
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.ui.graphics.Color
+val NavigatorBarLight = Color(0xFFB1E7FD)
+val NavSelectedColor = Color(0xFF0028A9)
+val NavUnselectedColor = Color.Black
+val NavIndicatorColor = Color(0xFFFFFFFF)
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
-
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+@Composable
+fun navigationBarItemColors(): NavigationBarItemColors{
+    return NavigationBarItemDefaults.colors(
+    selectedIconColor = NavSelectedColor,
+    selectedTextColor = NavSelectedColor,
+    indicatorColor = NavIndicatorColor,
+    unselectedIconColor = NavUnselectedColor,
+    unselectedTextColor = NavUnselectedColor
+    )
+}
