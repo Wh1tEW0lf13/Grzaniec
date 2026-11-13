@@ -3,6 +3,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -32,10 +33,19 @@ import kotlinx.coroutines.launch
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import com.example.grzeniec.ui.theme.NavigatorBarLight
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.grzeniec.viewmodel.SpendingViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Home(onNavigateToProfile: () -> Unit){
+fun Home(onNavigateToProfile: () -> Unit, viewModel: SpendingViewModel){
 
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
@@ -51,23 +61,105 @@ fun Home(onNavigateToProfile: () -> Unit){
         {
             AddButton { showBottomSheet = true }
         }
-                if (showBottomSheet) {
-                    ModalBottomSheet(
-                        onDismissRequest = {
-                            showBottomSheet = false
-                        },
-                        sheetState = sheetState
+        if (showBottomSheet) {
+            // Stany formularza
+            var name by remember { mutableStateOf("") }
+            var price by remember { mutableStateOf("") }
+
+            // Stany dla Dropdownu z kategoriami
+            var expanded by remember { mutableStateOf(false) }
+            var selectedCategory by remember { mutableStateOf("") }
+
+            // Placeholder
+            val categoriesPlaceholder = listOf("Jedzenie", "Transport", "Rozrywka", "Rachunki")
+
+            ModalBottomSheet(
+                onDismissRequest = { showBottomSheet = false },
+                sheetState = sheetState
+            ) {
+                Column(
+                    modifier = Modifier
+                        .background(NavigatorBarLight)
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = "Dodaj nowy element",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+
+                    OutlinedTextField(
+                        value = name,
+                        onValueChange = { name = it },
+                        label = { Text("Nazwa") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = price,
+                        onValueChange = { price = it },
+                        label = { Text("Cena") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    @OptIn(ExperimentalMaterial3Api::class)
+                    ExposedDropdownMenuBox(
+                        expanded = expanded,
+                        onExpandedChange = { expanded = !expanded },
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Column(Modifier.background(NavigatorBarLight)
-                            .fillMaxSize()
-                            .padding(10.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ){
-                            Text("Elo")
-                            Text("Siema")
+                        OutlinedTextField(
+                            value = selectedCategory,
+                            onValueChange = {},
+                            readOnly = true, // Blokuje ręczne wpisywanie, wymusza wybór z listy
+                            label = { Text("Kategoria") },
+                            placeholder = { Text("Wybierz kategorię...") },
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                            },
+                            modifier = Modifier
+                                .menuAnchor()
+                                .fillMaxWidth()
+                        )
+
+                        ExposedDropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            categoriesPlaceholder.forEach { category ->
+                                DropdownMenuItem(
+                                    text = { Text(category) },
+                                    onClick = {
+                                        selectedCategory = category
+                                        expanded = false
+                                    }
+                                )
+                            }
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Button(
+                        onClick = {
+                            val parsedPrice = price.replace(",", ".").toDoubleOrNull() ?: 0.0
+                            viewModel.addSpending(name, price.toDouble(), selectedCategory)
+
+                            showBottomSheet = false
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = name.isNotBlank() && price.isNotBlank() && selectedCategory.isNotBlank()
+                    ) {
+                        Text("Zapisz")
+                    }
                 }
+            }
+        }
             }
         }
 
