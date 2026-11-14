@@ -8,9 +8,20 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.grzeniec.data.SpendingDao
 import com.example.grzeniec.data.SpendingEntity
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class SpendingViewModel(private val dao: SpendingDao) : ViewModel() {
+
+    val allSpendings: StateFlow<List<SpendingEntity>> = dao.getAllSpending()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
     fun addSpending(name: String, price: Double, category: String )
     {
         viewModelScope.launch()

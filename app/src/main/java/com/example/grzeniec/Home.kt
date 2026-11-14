@@ -3,21 +3,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Shapes
-import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -29,18 +23,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.grzeniec.ui.theme.AddButtonColorContainer
 import com.example.grzeniec.ui.theme.AddButtonColorContent
-import kotlinx.coroutines.launch
 import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.Color
 import com.example.grzeniec.ui.theme.NavigatorBarLight
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.grzeniec.data.SpendingEntity
 import com.example.grzeniec.viewmodel.SpendingViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,9 +41,20 @@ fun Home(onNavigateToProfile: () -> Unit, viewModel: SpendingViewModel){
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
+    val spending by viewModel.allSpendings.collectAsState()
+    val maxTiles = 5
 
     Box(modifier = Modifier.fillMaxSize())
     {
+
+        Box(
+            modifier = Modifier
+                .align (Alignment.Center)
+                .padding(10.dp)
+        )
+        {
+            TilesView(spending, maxTiles)
+        }
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -62,11 +64,9 @@ fun Home(onNavigateToProfile: () -> Unit, viewModel: SpendingViewModel){
             AddButton { showBottomSheet = true }
         }
         if (showBottomSheet) {
-            // Stany formularza
             var name by remember { mutableStateOf("") }
             var price by remember { mutableStateOf("") }
 
-            // Stany dla Dropdownu z kategoriami
             var expanded by remember { mutableStateOf(false) }
             var selectedCategory by remember { mutableStateOf("") }
 
@@ -172,5 +172,15 @@ fun AddButton(onClick: () -> Unit) {
         contentColor = AddButtonColorContent,
     ) {
         Icon(Icons.Filled.Add, "Add new expense")
+    }
+}
+
+@Composable
+fun TilesView(spending: List<SpendingEntity>, maxTiles: Int)
+{
+    LazyColumn {
+        items(items = spending.take(maxTiles)){
+            spend -> Text(text = spend.name)
+        }
     }
 }
