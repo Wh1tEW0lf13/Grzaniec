@@ -1,42 +1,60 @@
 package com.example.grzeniec
+
+import android.graphics.fonts.Font
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.room.util.TableInfo
+import com.example.grzeniec.data.SpendingEntity
 import com.example.grzeniec.ui.theme.AddButtonColorContainer
 import com.example.grzeniec.ui.theme.AddButtonColorContent
-import androidx.compose.runtime.*
 import com.example.grzeniec.ui.theme.NavigatorBarLight
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
-import androidx.compose.ui.text.input.KeyboardType
-import com.example.grzeniec.data.SpendingEntity
+import com.example.grzeniec.ui.theme.PlaceHolderColorForSpending
 import com.example.grzeniec.viewmodel.SpendingViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Home(onNavigateToProfile: () -> Unit, viewModel: SpendingViewModel){
+fun Home(onNavigateToProfile: () -> Unit, viewModel: SpendingViewModel) {
 
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
@@ -46,13 +64,11 @@ fun Home(onNavigateToProfile: () -> Unit, viewModel: SpendingViewModel){
 
     Box(modifier = Modifier.fillMaxSize())
     {
-
-        Box(
-            modifier = Modifier
-                .align (Alignment.Center)
-                .padding(10.dp)
-        )
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp))
         {
+            Text(text = "Ostatnie", fontWeight = FontWeight.Bold)
             TilesView(spending, maxTiles)
         }
         Box(
@@ -70,7 +86,6 @@ fun Home(onNavigateToProfile: () -> Unit, viewModel: SpendingViewModel){
             var expanded by remember { mutableStateOf(false) }
             var selectedCategory by remember { mutableStateOf("") }
 
-            // Placeholder
             val categoriesPlaceholder = listOf("Jedzenie", "Transport", "Rozrywka", "Rachunki")
 
             ModalBottomSheet(
@@ -93,7 +108,7 @@ fun Home(onNavigateToProfile: () -> Unit, viewModel: SpendingViewModel){
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
-                        label = { Text("Nazwa") },
+                        label = { Text("Nazwa np. Rachunki") },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -101,7 +116,7 @@ fun Home(onNavigateToProfile: () -> Unit, viewModel: SpendingViewModel){
                     OutlinedTextField(
                         value = price,
                         onValueChange = { price = it },
-                        label = { Text("Cena") },
+                        label = { Text("Cena np. 2.50") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
@@ -116,7 +131,7 @@ fun Home(onNavigateToProfile: () -> Unit, viewModel: SpendingViewModel){
                         OutlinedTextField(
                             value = selectedCategory,
                             onValueChange = {},
-                            readOnly = true, // Blokuje ręczne wpisywanie, wymusza wybór z listy
+                            readOnly = true,
                             label = { Text("Kategoria") },
                             placeholder = { Text("Wybierz kategorię...") },
                             trailingIcon = {
@@ -153,15 +168,15 @@ fun Home(onNavigateToProfile: () -> Unit, viewModel: SpendingViewModel){
                             showBottomSheet = false
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        enabled = name.isNotBlank() && price.isNotBlank() && selectedCategory.isNotBlank()
+                        enabled = name.isNotBlank() && price.isNotBlank() && price.toFloatOrNull() != null && selectedCategory.isNotBlank()
                     ) {
                         Text("Zapisz")
                     }
                 }
             }
         }
-            }
-        }
+    }
+}
 
 
 @Composable
@@ -176,11 +191,29 @@ fun AddButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun TilesView(spending: List<SpendingEntity>, maxTiles: Int)
-{
-    LazyColumn {
-        items(items = spending.take(maxTiles)){
-            spend -> Text(text = spend.name)
+fun TilesView(spending: List<SpendingEntity>, maxTiles: Int) {
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        items(items = spending.take(maxTiles)) { spend ->
+            Row(modifier = Modifier.background(PlaceHolderColorForSpending)
+                .padding(10.dp),
+                verticalAlignment = Alignment.CenterVertically)
+            {
+                Column(modifier = Modifier.weight(1f)
+                    .padding(10.dp)
+                ) {
+                    Text(text = spend.name)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = spend.amount.toString() + " zł")
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = "Szczegóły",
+                tint = Color.Black
+            )
+            }
         }
     }
 }

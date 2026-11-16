@@ -12,6 +12,8 @@ val AddButtonColorContainer = Color(0xFF36EAF3)
 
 val AddButtonColorContent = Color(0xFF234EF1)
 
+val PlaceHolderColorForSpending = Color(0xC6FF6464)
+
 @Composable
 fun navigationBarItemColors(): NavigationBarItemColors{
     return NavigationBarItemDefaults.colors(
