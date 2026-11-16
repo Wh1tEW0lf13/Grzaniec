@@ -62,6 +62,10 @@ fun Home(onNavigateToProfile: () -> Unit, viewModel: SpendingViewModel) {
     val spending by viewModel.allSpendings.collectAsState()
     val maxTiles = 5
 
+    var newSpendName by remember { mutableStateOf("") }
+    var newSpendAmount by remember { mutableStateOf("") }
+    var newSpendCategory by remember { mutableStateOf("") }
+
     Box(modifier = Modifier.fillMaxSize())
     {
         Column(modifier = Modifier
@@ -80,11 +84,7 @@ fun Home(onNavigateToProfile: () -> Unit, viewModel: SpendingViewModel) {
             AddButton { showBottomSheet = true }
         }
         if (showBottomSheet) {
-            var name by remember { mutableStateOf("") }
-            var price by remember { mutableStateOf("") }
-
             var expanded by remember { mutableStateOf(false) }
-            var selectedCategory by remember { mutableStateOf("") }
 
             val categoriesPlaceholder = listOf("Jedzenie", "Transport", "Rozrywka", "Rachunki")
 
@@ -106,16 +106,16 @@ fun Home(onNavigateToProfile: () -> Unit, viewModel: SpendingViewModel) {
                     )
 
                     OutlinedTextField(
-                        value = name,
-                        onValueChange = { name = it },
+                        value = newSpendName,
+                        onValueChange = { newSpendName = it },
                         label = { Text("Nazwa np. Rachunki") },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
 
                     OutlinedTextField(
-                        value = price,
-                        onValueChange = { price = it },
+                        value = newSpendAmount,
+                        onValueChange = { newSpendAmount = it },
                         label = { Text("Cena np. 2.50") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         singleLine = true,
@@ -129,7 +129,7 @@ fun Home(onNavigateToProfile: () -> Unit, viewModel: SpendingViewModel) {
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         OutlinedTextField(
-                            value = selectedCategory,
+                            value = newSpendCategory,
                             onValueChange = {},
                             readOnly = true,
                             label = { Text("Kategoria") },
@@ -150,7 +150,7 @@ fun Home(onNavigateToProfile: () -> Unit, viewModel: SpendingViewModel) {
                                 DropdownMenuItem(
                                     text = { Text(category) },
                                     onClick = {
-                                        selectedCategory = category
+                                        newSpendCategory = category
                                         expanded = false
                                     }
                                 )
@@ -162,13 +162,13 @@ fun Home(onNavigateToProfile: () -> Unit, viewModel: SpendingViewModel) {
 
                     Button(
                         onClick = {
-                            val parsedPrice = price.replace(",", ".").toDoubleOrNull() ?: 0.0
-                            viewModel.addSpending(name, price.toDouble(), selectedCategory)
+                            val parsedPrice = newSpendAmount.replace(",", ".").toDoubleOrNull() ?: 0.0
+                            viewModel.addSpending(newSpendName, newSpendAmount.toDouble(), newSpendCategory)
 
                             showBottomSheet = false
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        enabled = name.isNotBlank() && price.isNotBlank() && price.toFloatOrNull() != null && selectedCategory.isNotBlank()
+                        enabled = newSpendName.isNotBlank() && newSpendAmount.isNotBlank() && newSpendAmount.toFloatOrNull() != null && newSpendCategory.isNotBlank()
                     ) {
                         Text("Zapisz")
                     }
