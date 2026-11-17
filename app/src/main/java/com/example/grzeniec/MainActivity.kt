@@ -75,6 +75,8 @@ fun ScaffoldView() {
             composable("home") {
                 Home(onNavigateToProfile = {
                     navController.navigate("home")
+                }, onNavigateToCharts = {
+                        navController.navigate("chart_page")
                 })
             }
             composable("history") {
@@ -89,6 +91,15 @@ fun ScaffoldView() {
                     }
                 )
             }
+
+            composable("chart_page") {
+                ChartPage(
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
             composable(
                 route = "details/{title}/{category}/{date}/{amount}",
                 arguments = listOf(

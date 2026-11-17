@@ -8,6 +8,10 @@ val NavSelectedColor = Color(0xFF0028A9)
 val NavUnselectedColor = Color.Black
 val NavIndicatorColor = Color(0xFFFFFFFF)
 
+val ChartBlue = Color(0xFF5A9BE1)
+val ChartPink = Color(0xFFBD5AE1)
+val ChartGreen = Color(0xFF7EE15A)
+
 @Composable
 fun navigationBarItemColors(): NavigationBarItemColors{
     return NavigationBarItemDefaults.colors(
