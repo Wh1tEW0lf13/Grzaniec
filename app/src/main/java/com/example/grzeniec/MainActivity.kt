@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.foundation.layout.padding
@@ -18,30 +19,40 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.grzeniec.data.AppDatabase
 import androidx.navigation.navArgument
 import com.example.grzeniec.ui.theme.NavigatorBarLight
 import com.example.grzeniec.ui.theme.GrzeniecTheme
 import com.example.grzeniec.ui.theme.navigationBarItemColors
+import com.example.grzeniec.viewmodel.SpendingViewModel
 import com.example.grzeniec.ui.TransactionDetails
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val db = AppDatabase.getDatabase(applicationContext)
+        val dao = db.spendingDao()
+
+        val viewModel: SpendingViewModel by viewModels {
+            SpendingViewModel.provideFactory(dao)
+        }
         enableEdgeToEdge()
         setContent {
             GrzeniecTheme {
-                ScaffoldView()
+                ScaffoldView(viewModel = viewModel)
             }
         }
     }
 }
 
 @Composable
-fun ScaffoldView() {
+fun ScaffoldView(viewModel: SpendingViewModel) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -76,9 +87,9 @@ fun ScaffoldView() {
                 Home(onNavigateToProfile = {
                     navController.navigate("home")
                 }, onNavigateToCharts = {
-                        navController.navigate("chart_page")
-                })
-            }
+                    navController.navigate("chart_page")
+                }, viewModel)
+                }
             composable("history") {
                 History(
                     onNavigateToProfile = {

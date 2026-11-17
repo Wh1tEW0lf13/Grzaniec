@@ -8,6 +8,12 @@ val NavSelectedColor = Color(0xFF0028A9)
 val NavUnselectedColor = Color.Black
 val NavIndicatorColor = Color(0xFFFFFFFF)
 
+val AddButtonColorContainer = Color(0xFF36EAF3)
+
+val AddButtonColorContent = Color(0xFF234EF1)
+
+val PlaceHolderColorForSpending = Color(0xC6FF6464)
+
 val ChartBlue = Color(0xFF5A9BE1)
 val ChartPink = Color(0xFFBD5AE1)
 val ChartGreen = Color(0xFF7EE15A)
