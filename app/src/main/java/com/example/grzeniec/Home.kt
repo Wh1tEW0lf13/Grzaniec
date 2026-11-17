@@ -32,6 +32,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import com.example.grzeniec.ui.components.BigButton
+import androidx.compose.ui.Modifier
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,12 +41,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.room.util.TableInfo
 import com.example.grzeniec.data.SpendingEntity
 import com.example.grzeniec.ui.theme.AddButtonColorContainer
 import com.example.grzeniec.ui.theme.AddButtonColorContent
@@ -54,7 +54,9 @@ import com.example.grzeniec.viewmodel.SpendingViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Home(onNavigateToProfile: () -> Unit, viewModel: SpendingViewModel) {
+fun Home(onNavigateToProfile: () -> Unit,
+         onNavigateToCharts: () -> Unit,
+         viewModel: SpendingViewModel) {
 
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
@@ -68,10 +70,18 @@ fun Home(onNavigateToProfile: () -> Unit, viewModel: SpendingViewModel) {
 
     Box(modifier = Modifier.fillMaxSize())
     {
+
+
         Column(modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp))
         {
+            BigButton(
+                title = "Podsumowanie miesiąca",
+                onClick = {
+                    onNavigateToCharts()
+                }
+            )
             Text(text = "Ostatnie", fontWeight = FontWeight.Bold)
             TilesView(spending, maxTiles)
         }
@@ -177,7 +187,6 @@ fun Home(onNavigateToProfile: () -> Unit, viewModel: SpendingViewModel) {
         }
     }
 }
-
 
 @Composable
 fun AddButton(onClick: () -> Unit) {

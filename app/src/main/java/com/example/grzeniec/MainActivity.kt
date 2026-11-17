@@ -1,5 +1,6 @@
 package com.example.grzeniec
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,14 +20,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.grzeniec.data.AppDatabase
+import androidx.navigation.navArgument
 import com.example.grzeniec.ui.theme.NavigatorBarLight
 import com.example.grzeniec.ui.theme.GrzeniecTheme
 import com.example.grzeniec.ui.theme.navigationBarItemColors
 import com.example.grzeniec.viewmodel.SpendingViewModel
+import com.example.grzeniec.ui.TransactionDetails
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,11 +87,48 @@ fun ScaffoldView(viewModel: SpendingViewModel) {
                 Home(onNavigateToProfile = {
                     navController.navigate("home")
                 }, viewModel)
+                }
+                onNavigateToCharts = {
+                        navController.navigate("chart_page")
+                })
             }
             composable("history") {
-                History(onNavigateToProfile = {
-                    navController.navigate("history")
-                })
+                History(
+                    onNavigateToProfile = {
+                        navController.navigate("history")
+                    },
+                    onNavigateToDetail = { title, category, date, amount ->
+                        navController.navigate(
+                            "details/${Uri.encode(title)}/${Uri.encode(category)}/${Uri.encode(date)}/${Uri.encode(amount)}"
+                        )
+                    }
+                )
+            }
+
+            composable("chart_page") {
+                ChartPage(
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
+            composable(
+                route = "details/{title}/{category}/{date}/{amount}",
+                arguments = listOf(
+                    navArgument("title") { type = NavType.StringType },
+                    navArgument("category") { type = NavType.StringType },
+                    navArgument("date") { type = NavType.StringType },
+                    navArgument("amount") { type = NavType.StringType }
+                )
+            ) { entry ->
+                TransactionDetails(
+                    title = entry.arguments?.getString("title") ?: "",
+                    category = entry.arguments?.getString("category") ?: "",
+                    date = entry.arguments?.getString("date") ?: "",
+                    amount = entry.arguments?.getString("amount") ?: "",
+                    onBackClick = { navController.popBackStack() }
+                )
             }
         }
 
