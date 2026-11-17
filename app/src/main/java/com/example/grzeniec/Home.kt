@@ -68,20 +68,21 @@ fun Home(onNavigateToProfile: () -> Unit,
     var newSpendAmount by remember { mutableStateOf("") }
     var newSpendCategory by remember { mutableStateOf("") }
 
-    Box(modifier = Modifier.fillMaxSize())
+    Box(modifier = Modifier.fillMaxSize().padding(vertical = 50.dp))
     {
-
-
         Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp))
+            .fillMaxWidth()
+            .padding(16.dp))
         {
-            BigButton(
-                title = "Podsumowanie miesiąca",
-                onClick = {
-                    onNavigateToCharts()
-                }
-            )
+            Box(modifier = Modifier.padding(bottom = 10.dp))
+            {
+                BigButton(
+                    title = "Podsumowanie miesiąca",
+                    onClick = {
+                        onNavigateToCharts()
+                    }
+                )
+            }
             Text(text = "Ostatnie", fontWeight = FontWeight.Bold)
             TilesView(spending, maxTiles)
         }
@@ -205,7 +206,8 @@ fun TilesView(spending: List<SpendingEntity>, maxTiles: Int) {
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         items(items = spending.take(maxTiles)) { spend ->
-            Row(modifier = Modifier.background(PlaceHolderColorForSpending)
+            Row(modifier = Modifier.background(PlaceHolderColorForSpending,
+                shape = RoundedCornerShape(16.dp))
                 .padding(10.dp),
                 verticalAlignment = Alignment.CenterVertically)
             {

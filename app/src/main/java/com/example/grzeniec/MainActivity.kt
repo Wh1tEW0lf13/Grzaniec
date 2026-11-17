@@ -86,12 +86,10 @@ fun ScaffoldView(viewModel: SpendingViewModel) {
             composable("home") {
                 Home(onNavigateToProfile = {
                     navController.navigate("home")
+                }, onNavigateToCharts = {
+                    navController.navigate("chart_page")
                 }, viewModel)
                 }
-                onNavigateToCharts = {
-                        navController.navigate("chart_page")
-                })
-            }
             composable("history") {
                 History(
                     onNavigateToProfile = {
