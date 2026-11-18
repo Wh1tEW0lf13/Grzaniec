@@ -92,6 +92,7 @@ fun ScaffoldView(viewModel: SpendingViewModel) {
                 }
             composable("history") {
                 History(
+                    viewModel = viewModel,
                     onNavigateToProfile = {
                         navController.navigate("history")
                     },
@@ -105,6 +106,7 @@ fun ScaffoldView(viewModel: SpendingViewModel) {
 
             composable("chart_page") {
                 ChartPage(
+                    viewModel = viewModel,
                     onNavigateBack = {
                         navController.popBackStack()
                     }
